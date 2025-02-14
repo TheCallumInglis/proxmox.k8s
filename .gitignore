@@ -1,0 +1,29 @@
+# Terraform
+terraform/.terraform/
+terraform/.terraform.lock.hcl
+terraform/terraform.tfstate*
+terraform/terraform.tfvars
+
+# Ansible
+ansible/inventory.ini
+ansible/roles/*/vars/*.yml  # If you store sensitive variables
+
+# Logs & Temp Files
+*.log
+*.bak
+*.swp
+*.tmp
+
+# Docker & System Files
+docker-compose.override.yml
+.env
+*.pid
+*.sock
+__pycache__/
+
+# Proxmox & Deployment
+id_rsa*
+id_rsa.pub
+*.pem
+
+.DS_Store
