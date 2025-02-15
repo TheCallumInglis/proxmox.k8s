@@ -11,8 +11,8 @@ This repository provides an Infrastructure as Code (IaC) setup for deploying and
 ## Setup
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/TheCallumInglis/hosting-infra.git
-cd hosting-infra
+git clone https://github.com/TheCallumInglis/hosting.infra.git
+cd hosting.infra
 ```
 
 ### 2. Configure & Run Terraform
