@@ -11,11 +11,12 @@
     proto: tcp
 
 
-# - name: Set up UFW -  Allow HTTP for Nginx ProxyManager
-#   ufw:
-#     rule: allow
-#     port: "81"
-#     proto: tcp
+- name: Set up UFW - Allow Nginx Proxy Manager from WG Network
+  ufw:
+    rule: allow
+    port: "81"
+    proto: tcp
+    from_ip: "10.66.0.0/24"
 
 - name: Set up UFW -  Allow HTTPS
   ufw: 
@@ -28,6 +29,19 @@
     rule: allow
     port: "10050"
     proto: tcp
+
+- name: Set up UFW - Allow WireGuard VPN
+  ufw:
+    rule: allow
+    port: "51820"
+    proto: udp
+
+- name: Set up UFW - Allow Protainer from WG Network
+  ufw:
+    rule: allow
+    port: "9443"
+    proto: tcp
+    from_ip: "10.66.0.0/24"
 
 - name: Enable UFW
   ufw:

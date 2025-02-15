@@ -4,6 +4,8 @@
     image: "jc21/nginx-proxy-manager:latest"
     state: started
     restart_policy: always
+    networks:
+      - name: proxy-network
     ports:
       - "80:80"
       - "443:443"

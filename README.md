@@ -40,7 +40,7 @@ This will:
 
 **NOTE: Ansible will not add a UFW rule for port 81**
 
-### **Portainer (Docker Management)**
+### Portainer (Docker Management)
 1. Access Portainer at:  
    **`http://your-vm-ip:9443`**
 2. On the first login:
@@ -52,6 +52,22 @@ This will:
    - Set up container networking
 
 **NOTE: Ansible will not add a UFW rule for port 9443**
+
+### WireGuard VPN
+- WireGuard runs as a **Docker container**.
+- The **default subnet** for clients: `10.66.0.0/24`
+- The **host** is accessible on `10.66.0.1`
+- **Server port:** `51820`
+
+#### Client Configuration
+To get the client config, run:
+```sh
+docker exec -it wireguard cat /config/peer1/peer1.conf
+# or
+docker logs -f wireguard # includes QR-code
+```
+
+This file can be imported into the WireGuard app on your device.
 
 ### Zabbix Monitoring
 - Ensure the Zabbix server can communicate with the agent.
@@ -67,4 +83,3 @@ This will:
 ## Future Improvements
 - Automate MySQL & PostgreSQL setup.
 - Automate backups for Nginx & MySQL.
-- Automate Wireguard/Tailscale setup

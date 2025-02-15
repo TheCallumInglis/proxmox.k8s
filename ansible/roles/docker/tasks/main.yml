@@ -2,11 +2,27 @@
   apt:
     name: docker.io
     state: present
+
+- name: Configure Docker to not modify iptables
+  copy:
+    dest: /etc/docker/daemon.json
+    content: |
+      {
+        "iptables": false
+      }
+    mode: '0644'
+  notify: Restart Docker
+
 - name: Add user to docker group
   user:
-    name: admin
+    name: "{{ ansible_ssh_user }}"
     groups: docker
     append: yes
+
+- name: Create Docker network for Reverse Proxying
+  community.docker.docker_network:
+    name: proxy-network
+    driver: bridge
 
 - name: Create Portainer data volume
   docker_volume:
@@ -18,6 +34,8 @@
     image: "portainer/portainer-ce:latest"
     state: started
     restart_policy: always
+    networks:
+      - name: proxy-network
     ports:
       - "9443:9443"  # Web UI
       - "8000:8000"  # Edge Agent

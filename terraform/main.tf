@@ -20,7 +20,7 @@ resource "proxmox_vm_qemu" "web_server" {
   agent       = 1
   sockets     = 1
   cores       = 4
-  memory      = 4096
+  memory      = 6144
   boot        = "order=scsi0" # has to be the same as the OS disk of the template
   clone       = var.template_name
   scsihw      = "virtio-scsi-single"

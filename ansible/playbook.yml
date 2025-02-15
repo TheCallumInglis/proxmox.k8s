@@ -9,3 +9,4 @@
     - docker
     - nginx
     - zabbix 
+    - wireguard
