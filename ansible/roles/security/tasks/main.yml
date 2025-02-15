@@ -1,0 +1,45 @@
+- name: Set up UFW - Allow SSH
+  ufw:
+    rule: allow
+    port: "22"
+    proto: tcp
+
+- name: Set up UFW -  Allow HTTP 
+  ufw:
+    rule: allow
+    port: "80"
+    proto: tcp
+
+
+# - name: Set up UFW -  Allow HTTP for Nginx ProxyManager
+#   ufw:
+#     rule: allow
+#     port: "81"
+#     proto: tcp
+
+- name: Set up UFW -  Allow HTTPS
+  ufw: 
+    rule: allow
+    port: "443"
+    proto: tcp
+
+- name: Set up UFW -  Allow Zabbix
+  ufw: 
+    rule: allow
+    port: "10050"
+    proto: tcp
+
+- name: Enable UFW
+  ufw:
+    state: enabled
+
+- name: Install fail2ban
+  apt:
+    name: fail2ban
+    state: present
+
+- name: Disable root login
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PermitRootLogin'
+    line: 'PermitRootLogin no'

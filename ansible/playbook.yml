@@ -1,0 +1,11 @@
+- name: Configure Web Server
+  hosts: webserver
+  become: yes
+  vars_files:
+    - secrets.yml
+  roles:
+    - common
+    - security
+    - docker
+    - nginx
+    - zabbix 

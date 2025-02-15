@@ -1,0 +1,32 @@
+- name: Set Timezone
+  timezone:
+    name: Europe/London
+
+- name: Update system packages
+  apt:
+    update_cache: yes
+    upgrade: dist
+
+- name: Install essential packages
+  apt:
+    name:
+      - curl
+      - htop
+      - vim
+      - ufw
+      - grc
+      - vim-nox
+      - bc
+      - facter
+      - aptitude
+      - software-properties-common
+      - molly-guard
+      - tree
+      - tmux
+      - tasksel
+      - parted
+      - nmap
+      - net-tools
+      - mc
+      - iftop
+    state: present

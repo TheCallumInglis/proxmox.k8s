@@ -27,3 +27,5 @@ id_rsa.pub
 *.pem
 
 .DS_Store
+secrets.yml
+.vscode

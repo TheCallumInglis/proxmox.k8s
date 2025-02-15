@@ -1,0 +1,13 @@
+Server={{ zabbix_server }}
+ServerActive={{ zabbix_server }}
+Hostname={{ ansible_hostname }}
+LogFile=/var/log/zabbix/zabbix_agentd.log
+AllowKey=system.run[*]
+LogRemoteCommands=1
+LogFileSize=128
+TLSConnect=psk
+TLSAccept=psk
+TLSPSKIdentity={{ zabbix_psk_identity }}
+TLSPSKFile=/etc/zabbix/zabbix_agentd.psk
+Include=/etc/zabbix/zabbix_agentd.d/*.conf
+PidFile=/run/zabbix/zabbix_agentd.pid

@@ -14,7 +14,7 @@ provider "proxmox" {
   pm_tls_insecure = true
 }
 
-resource "proxmox_vm_qemu" "WEBHOST01" {
+resource "proxmox_vm_qemu" "web_server" {
   name        = "WEBHOST01"
   target_node = var.proxmox_host
   agent       = 1
@@ -88,6 +88,10 @@ EOT
   }
 }
 
-output "public_ip" {
-  value = "Assigned public IP: ${var.public_ip}"
+resource "null_resource" "update_inventory" {
+  depends_on = [proxmox_vm_qemu.web_server]
+
+  provisioner "local-exec" {
+    command = "bash ./scripts/update_inventory.sh"
+  }
 }
