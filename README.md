@@ -42,7 +42,7 @@ This will:
 
 ### **Portainer (Docker Management)**
 1. Access Portainer at:  
-   **`http://your-vm-ip:9000`**
+   **`http://your-vm-ip:9443`**
 2. On the first login:
    - Create an **admin user**
    - Choose **Local Environment** (to manage Docker on this VM)
@@ -51,7 +51,7 @@ This will:
    - View logs & monitor resource usage
    - Set up container networking
 
-**NOTE: Ansible will not add a UFW rule for port 9000**
+**NOTE: Ansible will not add a UFW rule for port 9443**
 
 ### Zabbix Monitoring
 - Ensure the Zabbix server can communicate with the agent.
