@@ -1,0 +1,30 @@
+- name: Install Apache
+  apt:
+    name: apache2
+    state: present
+
+- name: Replace HTTP port 80 binding with 18080
+  lineinfile:
+    path: /etc/apache2/ports.conf
+    regexp: "^Listen 80"
+    state: absent
+  notify: Restart Apache
+
+- name: Remove SSL port binding
+  lineinfile:
+    path: /etc/apache2/ports.conf
+    regexp: "Listen 443"
+    state: absent
+  notify: Restart Apache
+
+- name: Disable default Apache site
+  command: a2dissite 000-default.conf
+  notify: Restart Apache
+
+- name: Restrict access to /var/www/html
+  file:
+    path: /var/www/html
+    mode: '0700'
+    owner: nobody
+    group: nogroup
+    state: directory

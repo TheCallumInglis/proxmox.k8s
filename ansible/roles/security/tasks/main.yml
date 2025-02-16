@@ -43,6 +43,13 @@
     proto: tcp
     from_ip: "10.66.0.0/24"
 
+- name: Set up UFW - Allow Nginx Proxy Manager to host
+  ufw:
+    rule: allow
+    proto: tcp
+    from_ip: "172.18.0.0/16"
+    to_ip: "10.66.0.0/24"
+
 - name: Enable UFW
   ufw:
     state: enabled
