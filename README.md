@@ -1,18 +1,20 @@
-# Hosting Infrastructure
+# Proxmox K8s Infrastructure
+
+Forked from [TheCallumInglis/hosting.infra](https://github.com/TheCallumInglis/hosting.infra) on 2025-06-15.
 
 ## Overview
 
-This repository provides an Infrastructure as Code (IaC) setup for deploying and managing a web hosting environment on Proxmox, using: 
+This repository provides an Infrastructure as Code (IaC) setup for deploying and managing a kubernetes cluster on Proxmox, using: 
 - Terraform
     - Automates VM provisioning in Proxmox.
 - Ansible
-    - Configures the VM with Docker, Nginx Proxy Manager and Zabbix
+    - Configures the VM with K8s and sets up cluster components.
 
 ## Setup
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/TheCallumInglis/hosting.infra.git
-cd hosting.infra
+git clone https://github.com/TheCallumInglis/proxmox.k8s.git
+cd proxmox.k8s
 ```
 
 ### 2. Configure & Run Terraform
@@ -23,15 +25,15 @@ This will:
 > ✅ Assign a public IP  
 > ✅ Automatically generate the Ansible inventory file  
 
-### 3. Configure & Run Ansible
+<!-- ### 3. Configure & Run Ansible
 See [Ansible](./ansible/) docs!
 
 This will:  
 > ✅ Update the system & install Docker  
 > ✅ Deploy Nginx Proxy Manager  
-> ✅ Install & configure the Zabbix agent  
+> ✅ Install & configure the Zabbix agent   -->
 
-## Usage
+<!-- ## Usage
 ### Nginx Proxy Manager
 1. Access Nginx Proxy Manager at http://your-vm-ip:81
 2. Default login:
@@ -71,9 +73,9 @@ This file can be imported into the WireGuard app on your device.
 
 ### Zabbix Monitoring
 - Ensure the Zabbix server can communicate with the agent.
-- Check logs in /var/log/zabbix-agent/zabbix_agentd.log.
+- Check logs in /var/log/zabbix-agent/zabbix_agentd.log. -->
 
-## Security
+<!-- ## Security
  - SSH Root Login Disabled
  - UFW Firewall Configured (ports 22, 80, 443, 10050)
 - Fail2Ban Installed
@@ -82,4 +84,4 @@ This file can be imported into the WireGuard app on your device.
 
 ## Future Improvements
 - Automate MySQL & PostgreSQL setup.
-- Automate backups for Nginx & MySQL.
+- Automate backups for Nginx & MySQL. -->
