@@ -1,7 +1,7 @@
-# Hosting Infrastructure | Terraform
+# Proxmox K8s | Terraform
 
 ## Overview
-Contains setup for basic web hosting infrastructure using Terraform.
+Contains setup for self-hosted kubernetes infrastructure on Proxmox using Terraform.
 
 ## Reference  
 - [Terraform | Proxmox Provider](https://registry.terraform.io/providers/Telmate/proxmox/latest/docs/guides/cloud-init%2520getting%2520started)
@@ -9,7 +9,7 @@ Contains setup for basic web hosting infrastructure using Terraform.
 - [Proxmox | Cloud-Init](https://pve.proxmox.com/wiki/Cloud-Init_Support)
 
 ## Setup | Proxmox
-You must first configure the base image to be used as a template on Proxmox.
+You must first configure the base image to be used as a template on Proxmox. Assuming you are running the following commands on the Proxmox host in the `/root` directory:
 
 ### Setup Cloud Image & Template VM
 
@@ -17,11 +17,12 @@ You must first configure the base image to be used as a template on Proxmox.
 image="debian-12-genericcloud-amd64.qcow2"
 template_vm="debian12-cloudinit"
 template_vm_id="9000"
+vm_disk="local-nvme"
 
 wget https://cloud.debian.org/images/cloud/bookworm/latest/${image}
 
 qm create ${template_vm_id} --name ${template_vm}
-qm set ${template_vm_id} --scsi0 local:0,import-from=/root/${image}
+qm set ${template_vm_id} --scsi0 ${vm_disk}:0,import-from=/root/${image}
 qm template ${template_vm_id}
 ```
 
