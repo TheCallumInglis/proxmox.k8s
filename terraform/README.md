@@ -13,6 +13,10 @@ You must first configure the base image to be used as a template on Proxmox. Ass
 
 ### Setup Cloud Image & Template VM
 
+Refer to [scripts](/scripts/) directory for cloud init setup scripts:
+  - [Debian 12](/scripts/debian12-cloudinit.sh)
+  - [Ubuntu 24.04](/scripts/ubuntu2404-cloudinit.sh)
+
 ```bash
 image="debian-12-genericcloud-amd64.qcow2"
 template_vm="debian12-cloudinit"

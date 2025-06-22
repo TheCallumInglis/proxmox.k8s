@@ -1,0 +1,54 @@
+- name: Initialise Kubernetes cluster
+  command: kubeadm init --pod-network-cidr={{ pod_network_cidr }}
+  register: kubeadm_init
+  args:
+    creates: /etc/kubernetes/admin.conf
+
+- name: Wait for Kubernetes API server to respond
+  uri:
+    url: https://localhost:6443/healthz
+    method: GET
+    validate_certs: no
+    status_code: 200
+  register: result
+  until: result.status == 200
+  retries: 15
+  delay: 5
+
+- name: Configure kubectl for the root user
+  shell: |
+    mkdir -p /home/{{ ansible_user }}/.kube
+    cp /etc/kubernetes/admin.conf /home/{{ ansible_user }}/.kube/config
+    chown {{ ansible_user }}:{{ ansible_user }} /home/{{ ansible_user }}/.kube/config
+  become: yes
+  become_user: root
+
+- name: Generate kubeadm join command
+  shell: kubeadm token create --print-join-command
+  register: join_command
+
+- name: Display join command
+  debug:
+    var: "{{ join_command.stdout }}"
+
+- name: Download Calico CNI
+  get_url:
+    url: https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/calico.yaml
+    dest: /tmp/cni.yml
+    mode: '0644'
+  become: false
+  when: inventory_hostname == groups['K8s_Master'][0]
+
+- name: Deploy Calico CNI
+  command: kubectl apply -f /tmp/cni.yml
+  become: false
+  when: inventory_hostname == groups['K8s_Master'][0]
+
+- name: Wait for Calico to be ready
+  command: kubectl wait --for=condition=Ready pods -l k8s-app=calico-node --namespace kube-system --timeout=10s
+  become: false
+  register: calico_status
+  retries: 30
+  delay: 10
+  until: calico_status.rc == 0
+  when: inventory_hostname == groups['K8s_Master'][0]

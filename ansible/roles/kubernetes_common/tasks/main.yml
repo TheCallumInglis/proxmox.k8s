@@ -1,0 +1,118 @@
+- name: Update system packages
+  apt:
+    update_cache: yes
+    upgrade: dist
+
+- name: Ensure apt keyring directory exists
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: '0755'
+
+- name: Check if Kubernetes GPG key exists
+  stat:
+    path: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+  register: k8s_gpg_key
+
+- name: Download Kubernetes apt key
+  ansible.builtin.get_url:
+    url: https://pkgs.k8s.io/core:/stable:/v1.33/deb/Release.key
+    dest: /tmp/kubernetes-Release.key
+    mode: '0644'
+  when: not k8s_gpg_key.stat.exists
+
+- name: Import Kubernetes apt key
+  ansible.builtin.command:
+    cmd: "gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg /tmp/kubernetes-Release.key"
+    creates: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+  when: not k8s_gpg_key.stat.exists
+
+- name: Remove temporary key file
+  ansible.builtin.file:
+    path: /tmp/kubernetes-Release.key
+    state: absent
+
+- name: Add Kubernetes APT repository
+  ansible.builtin.copy:
+    dest: /etc/apt/sources.list.d/kubernetes.list
+    content: |
+      deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.33/deb/ /
+    mode: '0644'
+
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: Install Kubernetes packages
+  apt:
+    name:
+      - kubelet
+      - kubeadm
+      - kubectl
+      - containerd
+    state: present
+  
+- name: Ensure containerd is started and enabled
+  systemd:
+    name: containerd
+    state: started
+    enabled: true
+
+- name: Ensure /etc/containerd exists
+  file:
+    path: /etc/containerd
+    state: directory
+    mode: '0755'
+
+- name: Generate default containerd config
+  command: containerd config default
+  register: containerd_config
+
+- name: Write containerd config to /etc/containerd/config.toml
+  copy:
+    dest: /etc/containerd/config.toml
+    content: "{{ containerd_config.stdout }}"
+    mode: '0644'
+
+- name: Ensure SystemdCgroup is true in containerd config
+  replace:
+    path: /etc/containerd/config.toml
+    regexp: '^(\s*)SystemdCgroup\s*=\s*false'
+    replace: '\1SystemdCgroup = true'
+  notify: Restart containerd
+  
+- name: Disable swap
+  command: swapoff -a
+  changed_when: false
+
+- name: Disable swap in fstab
+  replace:
+    path: /etc/fstab
+    regexp: '^([^#].*?\sswap\s+.*)$'
+    replace: '#\1'
+
+- name: Enable IP forwarding
+  ansible.posix.sysctl:
+    name: net.ipv4.ip_forward
+    value: '1'
+    sysctl_set: yes
+    reload: yes
+
+- name: Load br_netfilter kernel module
+  ansible.builtin.command: modprobe br_netfilter
+  become: true
+
+- name: Ensure br_netfilter is loaded on boot
+  ansible.builtin.copy:
+    dest: /etc/modules-load.d/br_netfilter.conf
+    content: "br_netfilter\n"
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+
+- name: Allow Kubernetes traffic through firewall
+  ufw:
+    rule: allow
+    port: 6443
+    proto: tcp

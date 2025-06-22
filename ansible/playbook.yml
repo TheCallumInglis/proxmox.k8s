@@ -1,13 +1,31 @@
-- name: Configure Web Server
-  hosts: webserver
+- name: Configure K8s
+  hosts: all 
   become: yes
-  vars_files:
-    - secrets.yml
   roles:
     - common
-    - security
     - docker
-    - nginx
-    - apache
-    - zabbix 
-    - wireguard
+    # - security          # TODO: Configure UFW for basic k8s cluster security
+    - kubernetes_common
+
+- name: Setup Master Node(s)
+  hosts: K8s_Master
+  become: yes
+  vars_files:
+    - var.yml
+  roles:
+    - kubernetes_master
+
+- name: Setup Worker Node(s)
+  hosts: K8s_Workers
+  become: yes
+  roles:
+    - kubernetes_worker
+
+- name: Setup Kubernetes Workloads
+  hosts: K8s_Master
+  become: yes
+  roles:
+    - istio
+    - metal_lb
+  vars_files:
+    - var.yml

@@ -29,4 +29,5 @@
       - net-tools
       - mc
       - iftop
+      - apt-transport-https
     state: present

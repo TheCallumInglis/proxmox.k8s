@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: helloworld
+  namespace: hello
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: helloworld
+  template:
+    metadata:
+      labels:
+        app: helloworld
+    spec:
+      containers:
+        - name: helloworld
+          image: hashicorp/http-echo
+          args:
+            - "-text=Hello from Istio"
+          ports:
+            - containerPort: 5678

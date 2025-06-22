@@ -1,3 +1,8 @@
+- name: Update system packages
+  apt:
+    update_cache: yes
+    upgrade: dist
+
 - name: Install Docker
   apt:
     name: docker.io
@@ -19,26 +24,7 @@
     groups: docker
     append: yes
 
-- name: Create Docker network for Reverse Proxying
-  community.docker.docker_network:
-    name: proxy-network
-    driver: bridge
-
-- name: Create Portainer data volume
-  docker_volume:
-    name: portainer_data
-
-- name: Deploy Portainer container
-  docker_container:
-    name: portainer
-    image: "portainer/portainer-ce:latest"
-    state: started
-    restart_policy: always
-    networks:
-      - name: proxy-network
-    ports:
-      - "9443:9443"  # Web UI
-      - "8000:8000"  # Edge Agent
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - portainer_data:/data
+- name: Verify Docker
+  command: docker --version
+  register: docker_version
+  changed_when: false

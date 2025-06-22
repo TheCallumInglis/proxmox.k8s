@@ -1,0 +1,19 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: helloworld
+  namespace: hello
+spec:
+  hosts:
+    - "*"
+  gateways:
+    - helloworld-gateway
+  http:
+    - match:
+        - uri:
+            prefix: "/helloworld"
+      route:
+        - destination:
+            host: helloworld.hello.svc.cluster.local
+            port:
+              number: 80

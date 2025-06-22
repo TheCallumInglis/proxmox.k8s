@@ -1,0 +1,29 @@
+- name: Ensure istio download directory exists
+  file:
+    path: /tmp/istio
+    state: directory
+    mode: '0755'
+
+- name: Download and extract istioctl
+  unarchive:
+    src: "https://github.com/istio/istio/releases/download/{{ istio_version }}/istio-{{ istio_version }}-linux-amd64.tar.gz"
+    dest: /usr/local/bin
+    remote_src: yes
+    extra_opts: [--strip-components=2]
+    creates: /usr/local/bin/istioctl
+
+
+- name: Install istio with default profile
+  command: istioctl install --set profile=default -y
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+  become: false
+
+- name: Label default namespace for sidecar injection
+  command: kubectl label namespace default istio-injection=enabled --overwrite
+  become: false
+
+- name: Wait for istiod to be ready
+  shell: |
+    kubectl wait --for=condition=ready pod -l app=istiod -n istio-system --timeout=120s
+  become: false
