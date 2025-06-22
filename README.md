@@ -2,6 +2,8 @@
 
 Forked from [TheCallumInglis/hosting.infra](https://github.com/TheCallumInglis/hosting.infra) on 2025-06-15.
 
+![k8s-components](/assets/k8s-components.png)
+
 ## Overview
 
 This repository provides an Infrastructure as Code (IaC) setup for deploying and managing a kubernetes cluster on Proxmox, using: 
