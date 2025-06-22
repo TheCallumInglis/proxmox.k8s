@@ -31,6 +31,9 @@ See [Ansible](./ansible/) docs!
 See [Sample](./sample) directory for an example manifest to deploy applications on the cluster.
 
 ## Future Improvements
+- Terraform Enhancements:
+    - [ ] Re-instate [update_inventory.sh](/terraform/scripts/update_inventory.sh) script to update Ansible inventory with VM IPs.
+
 - Ansible Playbook Enhancements:
     - [ ] Securty Hardening
     - [ ] Zabbix Monitoring
