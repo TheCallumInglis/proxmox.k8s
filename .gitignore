@@ -6,7 +6,9 @@ terraform/terraform.tfvars
 
 # Ansible
 ansible/inventory.ini
-ansible/roles/*/vars/*.yml  # If you store sensitive variables
+ansible/roles/*/vars/*.yml
+ansible/*.secrets.yml
+ansible/kubeconfigs
 
 # Logs & Temp Files
 *.log

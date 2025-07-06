@@ -1,0 +1,20 @@
+- name: Ensure user cert base directory exists
+  file:
+    path: /etc/kubernetes/users
+    state: directory
+    owner: root
+    group: root
+    mode: 0750
+
+- name: Generate certs and kubeconfig for each user
+  include_tasks: createuser.yml
+  loop: "{{ kube_users }}"
+  loop_control:
+    loop_var: kube_user
+
+- name: Fetch kubeconfig files back to Ansible controller
+  fetch:
+    src: "/home/{{ ansible_user }}/kubeconfig-{{ item }}.yml"
+    dest: "kubeconfigs/{{ item }}.yml"
+    flat: yes
+  loop: "{{ kube_users }}"

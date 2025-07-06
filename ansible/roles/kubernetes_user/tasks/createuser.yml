@@ -1,0 +1,59 @@
+- name: Create directory for {{ kube_user }}
+  file:
+    path: /etc/kubernetes/users/{{ kube_user }}
+    state: directory
+    owner: root
+    group: root
+    mode: 0750
+
+- name: Generate private key for {{ kube_user }}
+  openssl_privatekey:
+    path: /etc/kubernetes/users/{{ kube_user }}/{{ kube_user }}.key
+    size: 2048
+    state: present
+
+- name: Generate CSR for {{ kube_user }}
+  openssl_csr:
+    path: /etc/kubernetes/users/{{ kube_user }}/{{ kube_user }}.csr
+    privatekey_path: /etc/kubernetes/users/{{ kube_user }}/{{ kube_user }}.key
+    common_name: "{{ kube_user }}"
+    organization_name: admin
+
+- name: Sign certificate for {{ kube_user }}
+  command: >
+    openssl x509 -req
+    -in /etc/kubernetes/users/{{ kube_user }}/{{ kube_user }}.csr
+    -CA /etc/kubernetes/pki/ca.crt
+    -CAkey /etc/kubernetes/pki/ca.key
+    -CAcreateserial
+    -out /etc/kubernetes/users/{{ kube_user }}/{{ kube_user }}.crt
+    -days 365
+  args:
+    creates: "/etc/kubernetes/users/{{ kube_user }}/{{ kube_user }}.crt"
+
+- name: Read the Kubernetes CA cert
+  slurp:
+    src: /etc/kubernetes/pki/ca.crt
+  register: ca_cert_raw
+
+- name: Read and base64-encode the client cert for {{ kube_user }}
+  slurp:
+    src: /etc/kubernetes/users/{{ kube_user }}/{{ kube_user }}.crt
+  register: user_cert_raw
+
+- name: Read and base64-encode the client key for {{ kube_user }}
+  slurp:
+    src: /etc/kubernetes/users/{{ kube_user }}/{{ kube_user }}.key
+  register: user_key_raw
+
+- name: Generate kubeconfig for {{ kube_user }} with embedded CA
+  template:
+    src: ../files/kubeconfig.yml.j2
+    dest: "/home/{{ ansible_user }}/kubeconfig-{{ kube_user }}.yml"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0600'
+  vars:
+    ca_cert_encoded: "{{ ca_cert_raw.content }}"
+    user_cert_encoded: "{{ user_cert_raw.content }}"
+    user_key_encoded: "{{ user_key_raw.content }}"

@@ -1,0 +1,8 @@
+
+- name: Setup Kubernetes Users
+  hosts: K8s_Master
+  become: true
+  vars_files:
+    - kubeusers.secrets.yml
+  roles:
+    - kubernetes_user

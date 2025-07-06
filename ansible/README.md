@@ -34,3 +34,30 @@ ansible_ssh_common_args='-o StrictHostKeyChecking=no'
 ```bash
 ansible-playbook -i inventory.ini playbook.yml
 ```
+
+## Optional: Kube Users
+
+## Setup | Secrets
+Create `kubeusers.secrets.yml` with the following structure:
+```yaml
+kube_users:
+    - user1
+    - user2
+```
+
+Run the playbook::
+```bash
+ansible-playbook -i inventory.ini kubeusers.yml
+```
+
+Test the user:
+```bash
+KUBECONFIG=kubeconfigs/user1.yaml kubectl get pods -A
+# Expect: "Error from server (Forbidden): pods is forbidden: User "user1" cannot list resource "pods" in API group "" at the cluster scope"
+```
+
+Optional, setup roles for the users:
+```bash
+# e.g. give cluster-admin role to user1
+kubectl create clusterrolebinding user1-admin --clusterrole=cluster-admin --user=user1
+```
