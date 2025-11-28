@@ -12,4 +12,4 @@ spec:
         name: http
         protocol: HTTP
       hosts:
-        - "k8s.local.sitenotfound.co.uk"
+        - "helloworld.lab3.sitenotfound.co.uk"
