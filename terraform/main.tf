@@ -30,6 +30,7 @@ resource "proxmox_vm_qemu" "k8s_master" {
   scsihw      = "virtio-scsi-single"
   vm_state    = "running"
   automatic_reboot  = true
+  onboot      = true
 
   os_type   = "cloud-init"
   cpu_type  = "host"
@@ -93,6 +94,7 @@ resource "proxmox_vm_qemu" "k8s_node" {
   scsihw      = "virtio-scsi-single"
   vm_state    = "running"
   automatic_reboot  = true
+  onboot      = true
 
   os_type   = "cloud-init"
   cpu_type  = "host"
