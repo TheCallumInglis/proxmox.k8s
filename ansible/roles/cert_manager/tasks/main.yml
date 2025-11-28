@@ -1,0 +1,53 @@
+- name: Ensure kubernetes.core collection is available
+  ansible.builtin.debug:
+    msg: "Requires kubernetes.core.k8s collection and working kubeconfig"
+
+- name: Install cert-manager CRDs and controllers
+  kubernetes.core.k8s:
+    state: present
+    src: "https://github.com/cert-manager/cert-manager/releases/latest/download/cert-manager.yaml"
+    kubeconfig: "{{ kubeconfig_path }}"
+
+- name: Create Cloudflare API token secret
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: cloudflare-api-token-secret
+        namespace: cert-manager
+      type: Opaque
+      stringData:
+        api-token: "{{ cloudflare_api_token }}"
+    kubeconfig: "{{ kubeconfig_path }}"
+
+- name: Wait for cert-manager-webhook deployment to be ready
+  kubernetes.core.k8s_info:
+    api_version: apps/v1
+    kind: Deployment
+    name: cert-manager-webhook
+    namespace: cert-manager
+    kubeconfig: "{{ kubeconfig_path }}"
+  register: cm_webhook
+  until: cm_webhook.resources
+         and cm_webhook.resources[0].status.availableReplicas | default(0) | int > 0
+  retries: 30
+  delay: 10
+
+# This is really flakey, if not working, check the logs: kubectl logs -n cert-manager deploy/cert-manager-cainjector
+- name: Give cert-manager cainjector time to inject CA bundle
+  ansible.builtin.pause:
+    seconds: 120
+
+- name: Apply ClusterIssuer for wildcard certificates
+  kubernetes.core.k8s:
+    state: present
+    definition: "{{ lookup('template', 'clusterissuer.yml.j2') | from_yaml }}"
+    kubeconfig: "{{ kubeconfig_path }}"
+
+- name: Apply wildcard Certificate for {{ wildcard_domain }}
+  kubernetes.core.k8s:
+    state: present
+    definition: "{{ lookup('template', 'certificate.yml.j2') | from_yaml }}"
+    kubeconfig: "{{ kubeconfig_path }}"

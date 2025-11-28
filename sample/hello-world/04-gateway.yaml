@@ -13,3 +13,12 @@ spec:
         protocol: HTTP
       hosts:
         - "helloworld.lab3.sitenotfound.co.uk"
+    - port:
+        number: 443
+        name: https
+        protocol: HTTPS
+      tls:
+        mode: SIMPLE
+        credentialName: lab-wildcard-tls
+      hosts:
+        - "helloworld.lab3.sitenotfound.co.uk"

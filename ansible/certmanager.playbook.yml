@@ -1,0 +1,11 @@
+- name: Setup Certificate Manager
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    ansible_python_interpreter: "{{ ansible_playbook_python }}"
+    kubeconfig_path: "~/.kube/config"
+  roles:
+    - cert_manager
+  vars_files:
+    - certmanager.secrets.yml

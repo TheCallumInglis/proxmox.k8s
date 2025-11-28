@@ -61,3 +61,24 @@ Optional, setup roles for the users:
 # e.g. give cluster-admin role to user1
 kubectl create clusterrolebinding user1-admin --clusterrole=cluster-admin --user=user1
 ```
+
+## Optional: Lets Encrypt Cert Manager
+Configure `certmanager.secrets.yml` as follows, assuming you are using Cloudflare as DNS provider
+
+```yaml
+letsencrypt_email: "user@example.com"
+
+base_domain: "lab.example.com"
+wildcard_domain: "*.lab.example.com"
+
+cloudflare_api_token: "YOUR_CLOUDFLARE_API_TOKEN"
+
+# hosts that this gateway should accept
+istio_gateway_hosts:
+  - "*.lab.example.com"
+```
+
+Run the playbook:
+```bash
+ansible-playbook -i inventory.ini certmanager.playbook.yml
+```

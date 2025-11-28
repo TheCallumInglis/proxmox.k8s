@@ -1,0 +1,11 @@
+k8s_namespace_istio: "istio-system"
+letsencrypt_acme_server: "https://acme-v02.api.letsencrypt.org/directory"
+
+letsencrypt_cluster_issuer_name: "letsencrypt-dns"
+letsencrypt_private_key_secret: "letsencrypt-dns-key"
+wildcard_certificate_name: "lab-wildcard"
+wildcard_tls_secret_name: "lab-wildcard-tls"
+
+istio_gateway_name: "lab-gateway"
+istio_ingress_selector:
+  istio: ingressgateway

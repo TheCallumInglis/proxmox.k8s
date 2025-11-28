@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ wildcard_certificate_name }}
+  namespace: {{ k8s_namespace_istio }}
+spec:
+  secretName: {{ wildcard_tls_secret_name }}
+  dnsNames:
+    - "{{ wildcard_domain }}"
+  issuerRef:
+    name: {{ letsencrypt_cluster_issuer_name }}
+    kind: ClusterIssuer
