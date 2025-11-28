@@ -41,5 +41,5 @@ See [Sample](./sample) directory for an example manifest to deploy applications 
     - [ ] Zabbix Monitoring
 
 - Automate setup of:
-    - [ ] SSL Certificate Issuance
+    - [x] SSL Certificate Issuance
     - [ ] Multi-Master K8s Cluster
