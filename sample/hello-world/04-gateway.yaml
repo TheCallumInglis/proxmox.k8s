@@ -11,6 +11,8 @@ spec:
         number: 80
         name: http
         protocol: HTTP
+      tls:
+        httpsRedirect: true
       hosts:
         - "helloworld.lab3.sitenotfound.co.uk"
     - port:
