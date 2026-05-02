@@ -4,13 +4,23 @@
     state: directory
     mode: '0755'
 
+- name: Check currently installed istioctl version
+  command: /usr/local/bin/istioctl version --short --remote=false
+  register: istioctl_version_check
+  changed_when: false
+  failed_when: false
+
+- name: Parse installed istioctl version
+  set_fact:
+    installed_istioctl_version: "{{ (istioctl_version_check.stdout | regex_search('([0-9]+\\.[0-9]+\\.[0-9]+)')) | default('') }}"
+
 - name: Download and extract istioctl
   unarchive:
     src: "https://github.com/istio/istio/releases/download/{{ istio_version }}/istio-{{ istio_version }}-linux-amd64.tar.gz"
     dest: /usr/local/bin
     remote_src: yes
     extra_opts: [--strip-components=2]
-    creates: /usr/local/bin/istioctl
+  when: installed_istioctl_version != istio_version
 
 
 - name: Install istio with default profile
