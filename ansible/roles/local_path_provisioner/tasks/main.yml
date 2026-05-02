@@ -1,0 +1,29 @@
+- name: Check currently installed local-path-provisioner image
+  command: kubectl -n local-path-storage get deployment local-path-provisioner -o jsonpath={'.spec.template.spec.containers[0].image'}
+  register: local_path_image_check
+  changed_when: false
+  failed_when: false
+
+- name: Parse installed local-path-provisioner version
+  set_fact:
+    installed_local_path_provisioner_version: "{{ (local_path_image_check.stdout | regex_search('(v?[0-9]+\\.[0-9]+\\.[0-9]+)$')) | default('') }}"
+
+- name: Apply local-path-provisioner manifest
+  shell: |
+    kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/{{ local_path_provisioner_version }}/deploy/local-path-storage.yaml
+  when: installed_local_path_provisioner_version != local_path_provisioner_version
+  become: false
+
+- name: Wait for local-path-provisioner deployment to be ready
+  shell: |
+    kubectl wait --namespace local-path-storage \
+      --for=condition=available deployment/local-path-provisioner \
+      --timeout=120s
+  register: local_path_wait_result
+  failed_when: "'condition met' not in local_path_wait_result.stdout"
+  become: false
+
+- name: Set local-path as default storage class
+  shell: |
+    kubectl patch storageclass local-path -p '{"metadata":{"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+  become: false
