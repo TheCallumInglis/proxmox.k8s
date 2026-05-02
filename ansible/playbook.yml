@@ -27,5 +27,6 @@
   roles:
     - istio
     - metal_lb
+    - local_path_provisioner
   vars_files:
     - var.yml
