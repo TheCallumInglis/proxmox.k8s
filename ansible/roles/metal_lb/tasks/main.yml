@@ -1,6 +1,17 @@
+- name: Check currently installed MetalLB controller image
+  command: kubectl -n metallb-system get deployment controller -o jsonpath={'.spec.template.spec.containers[0].image'}
+  register: metallb_image_check
+  changed_when: false
+  failed_when: false
+
+- name: Parse installed MetalLB version
+  set_fact:
+    installed_metallb_version: "{{ (metallb_image_check.stdout | regex_search('(v?[0-9]+\\.[0-9]+\\.[0-9]+)$')) | default('') }}"
+
 - name: Apply MetalLB manifests
   shell: |
     kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/{{ metallb_version }}/config/manifests/metallb-native.yaml
+  when: installed_metallb_version != metallb_version
   become: false
 
 - name: Wait for MetalLB controller to be ready
