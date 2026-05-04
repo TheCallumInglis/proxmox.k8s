@@ -30,4 +30,5 @@
       - mc
       - iftop
       - apt-transport-https
+      - nfs-common
     state: present
