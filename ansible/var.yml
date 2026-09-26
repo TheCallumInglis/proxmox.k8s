@@ -1,5 +1,8 @@
 pod_network_cidr: "192.168.0.0/16"
-istio_version: "1.29.0"
+istio_version: "1.31.1"
 metallb_version: "v0.15.3"
 local_path_provisioner_version: "v0.0.35"
 metallb_ip_range: "10.2.10.100-10.2.10.110"
+
+# Optional
+istio_image_hub: harbour.lab2.sitenotfound.co.uk/dockerhub/istio

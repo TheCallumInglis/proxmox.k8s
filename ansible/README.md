@@ -14,6 +14,7 @@ Secures instance & sets up common tooling, including:
     - CNI (Container Network Interface) plugin (Calico)
     - Load Balancer (MetalLB)
     - Istio Service Mesh
+        - Note: Optionally configure `istio_image_hub` in `var.yml` to use a custom image hub, e.g. pull from a local harbor registry 
 
 ## Setup | Inventory
 Define `inventory.ini`, for example:
