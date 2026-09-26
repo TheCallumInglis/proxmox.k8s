@@ -24,7 +24,13 @@
 
 
 - name: Install istio with default profile
-  command: istioctl install --set profile=default -y
+  command: >
+    istioctl install
+    --set profile=default
+    {% if istio_image_hub is defined and istio_image_hub | length > 0 %}
+    --set hub={{ istio_image_hub }}
+    {% endif %}
+    -y
   environment:
     PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
   become: false
