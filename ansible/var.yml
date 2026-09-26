@@ -1,3 +1,4 @@
+k8s_version: "1.33"
 pod_network_cidr: "192.168.0.0/16"
 istio_version: "1.31.1"
 metallb_version: "v0.15.3"
